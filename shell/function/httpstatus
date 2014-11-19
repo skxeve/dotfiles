@@ -1,0 +1,4 @@
+function httpstatus()
+{
+    curl -I "${1}" 2>&1 | grep HTTP
+}

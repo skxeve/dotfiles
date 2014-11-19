@@ -1,0 +1,14 @@
+[user]
+    name = skxeve
+    email = skxeve@dummy.com
+[color]
+    ui = true
+[alias]
+    st = status
+    graph = log --graph --date-order --all --pretty=format:'%Cgreen%h %C(Cyan)%ad %C(Magenta)%d%n    %C(Yellow)%cn %Creset%s' --date=iso -n 12
+[merge]
+    ff = false
+[core]
+    excludesfile = ~/.gitignore
+[push]
+    default = matching

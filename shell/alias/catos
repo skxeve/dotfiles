@@ -1,0 +1,2 @@
+alias centos='cat /etc/redhat-release'
+alias ubuntuos='cat /etc/lsb-release'

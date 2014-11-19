@@ -1,0 +1,13 @@
+function bd()
+{
+    if [ "${1}" != "" ]; then
+        _bd="";
+        for i in `seq 1 ${1}`
+        do
+            _bd="../"${_bd}
+        done
+    else
+        _bd="../"
+    fi
+    cd $_bd
+}

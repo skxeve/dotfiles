@@ -1,0 +1,10 @@
+function cd()
+{
+    if [ -z ${1} ]; then
+        pushd ${HOME} > /dev/null
+    else
+        pushd ${1} > /dev/null
+    fi
+}
+
+alias gd='dirs -v; echo -n "select number: "; read newdir; pushd > /dev/null +"$newdir"'
