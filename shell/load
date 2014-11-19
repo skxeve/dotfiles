@@ -1,5 +1,4 @@
 _shelldir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
-echo $_shelldir
 
 for _dirpath in `find $_shelldir -type d`
 do
