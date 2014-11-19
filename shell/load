@@ -3,11 +3,10 @@ _shelldir=$(cd $(dirname $0); pwd)
 for _dirpath in `find $_shelldir -type d`
 do
     if [ "$_dirpath" != "$_shelldir" ]; then
-        echo $_dirpath
         for _shellpath in `find $_dirpath -type f`
         do
             if [ -f ${_shellpath} ]; then
-                echo $_shellpath
+                source $_shellpath
             fi
         done
     fi
