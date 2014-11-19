@@ -6,7 +6,7 @@ do
     ln -s -v $_dotpath ~/$_dotname
 done
 
-_loadpath="/bin/sh $_shelldir/shell/load"
+_loadpath=". $_shelldir/shell/load"
 if [ -f ~/.bash_profile ]; then
     if [ "$(grep -c "$_loadpath" ~/.bash_profile)" == "0" ]; then
         echo $_loadpath >> ~/.bash_profile
