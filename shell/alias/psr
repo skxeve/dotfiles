@@ -1,0 +1,1 @@
+alias psrcs='phpcs --standard=Psr2 -v'
