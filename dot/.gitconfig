@@ -6,6 +6,10 @@
 [alias]
     st = status
     graph = log --graph --date-order --all --pretty=format:'%Cgreen%h %C(Cyan)%ad %C(Magenta)%d%n    %C(Yellow)%cn %Creset%s' --date=iso -n 12
+    co = "!s() { git branch --no-color | awk '{ if ($1 == \"*\") {print $2} else {print $1}}' | grep $1 $2; } ; f() { if [ \"$1\" != \"\" ]; then git checkout $1; if [ $? -ne 0 ]; then _sc=`s $1 -c`; if [ $_sc -eq 1 ]; then _sb=`s $1`; echo git checkout $_sb; git checkout $_sb; else echo; echo Did you mean one of these?; for i in `s $1`; do echo \" $i\"; done; fi; fi; else echo 'not set branch name'; fi; }; f"
+    br = "!f() { if [ \"$1\" != \"\" ]; then echo git branch $1 origin/$1; git branch $1 origin/$1; else echo 'not set branch name.'; fi; }; f"
+    ff = "!f() { if [ \"$1\" != \"\" ]; then echo git checkout $1; git checkout $1; if [ $? -eq 0 ]; then echo git merge origin/$1 -ff; git merge origin/$1 --ff; fi; else echo 'not set branch name.'; fi; }; f"
+    up = "!f() { git status; git add .; git commit -m up; git push; }; f"
 [merge]
     ff = false
 [core]
