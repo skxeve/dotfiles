@@ -1,0 +1,8 @@
+#!/bin/sh
+if [[ $@ = "" ]]; then
+    PARAM="HEAD^"
+else
+    PARAM=$@
+fi
+git diff --word-diff-regex=$'[^\x80-\xbf][\x80-\xbf]*' --word-diff=color $PARAM
+
