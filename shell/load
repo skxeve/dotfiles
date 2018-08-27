@@ -1,4 +1,6 @@
 _shelldir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+_rootdir=$(cd $(dirname ${_shelldir}); pwd)
+export PATH="$PATH:${_rootdir}/bin"
 
 for _dirpath in `find $_shelldir -type d`
 do
