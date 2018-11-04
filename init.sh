@@ -1,10 +1,31 @@
 _shelldir=$(cd $(dirname $0); pwd)
 
-_loadpath=". $_shelldir/shell/load"
+_addline="# skxeve github dotfiles"
 if [ -f ~/.bash_profile ]; then
-    if [ "$(grep -c "$_loadpath" ~/.bash_profile)" == "0" ]; then
-        echo $_loadpath >> ~/.bash_profile
+    if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
+        echo $_addline >> ~/.bash_profile
+        echo "added: $_addline"
+    else
+        echo "skip add: $_addline"
     fi
 else
-    echo $_loadpath > ~/.bash_profile
+    echo $_addline > ~/.bash_profile
+    echo "created .bash_profile: $_addline"
 fi
+
+_addline=". $_shelldir/shell/load"
+if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
+    echo $_addline >> ~/.bash_profile
+    echo "added: $_addline"
+else
+    echo "skip add: $_addline"
+fi
+
+_addline="export PATH=\$PATH:$_shelldir/bin"
+if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
+    echo $_addline >> ~/.bash_profile
+    echo "added: $_addline"
+else
+    echo "skip add: $_addline"
+fi
+
