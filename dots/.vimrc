@@ -1,7 +1,7 @@
 set encoding=utf-8
 
 set fileformats=unix,dos,mac
-set vb t_vs=
+set vb t_vb=
 set backspace=indent,eol,start
 
 set ignorecase
@@ -24,3 +24,5 @@ if exists("syntax")
 endif
 set background=dark
 colorscheme darkblue
+
+filetype plugin indent on
