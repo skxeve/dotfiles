@@ -1,0 +1,9 @@
+function homepwd()
+{
+    _pwd=$(pwd)
+    if [[ "$_pwd" =~ ^$HOME ]]; then
+        echo ~${_pwd:${#HOME}}
+    else
+        echo $_pwd
+    fi
+}
