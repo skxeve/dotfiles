@@ -1,0 +1,16 @@
+function homepath()
+{
+    if [ "$1" = "" ]; then
+        echo Empty parameter.
+        return
+    fi
+    if [ ! -e $1 ]; then
+        echo Not Found $1
+        return
+    fi
+    if [ -f $1 ]; then
+        echo $(cd $(dirname $1) && homepwd)/$(basename $1)
+    else
+        echo $(cd $(dirname $1) && homepwd)
+    fi
+}
