@@ -1,0 +1,17 @@
+function gitdir()
+{
+    if [ "${1}" == "" ]; then
+        echo Please specify dir name.
+        return 1
+    fi
+    if [ -d ${1} ]; then
+        echo Already exists $(pwd)/${1}
+    else
+        mkdir -p ${1}
+    fi
+    if [ -f ${1}/.gitkeep ]; then
+        echo Already exists $(pwd)/${1}/.gitkeep
+    else
+        touch ${1}/.gitkeep
+    fi
+}
