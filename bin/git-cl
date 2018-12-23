@@ -1,0 +1,45 @@
+#!/bin/bash
+
+GIT_ROOT="${HOME}/git"
+MY_GIT_NAME=skxeve
+
+TARGET=$1
+if [ "${TARGET}" = "" ]; then
+    echo "Please specify repository"
+    exit 1
+fi
+
+USE_TARGET=false
+if [[ ${TARGET} =~ ^git@([a-zA-Z0-9._-]+):([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)\.git$ ]]; then
+    USE_TARGET=true
+    HOST=${BASH_REMATCH[1]}
+    USER=${BASH_REMATCH[2]}
+    REPO=${BASH_REMATCH[3]}
+elif [[ ${TARGET} =~ ^https://([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)\.git$ ]]; then
+    USE_TARGET=true
+    HOST=${BASH_REMATCH[1]}
+    USER=${BASH_REMATCH[2]}
+    REPO=${BASH_REMATCH[3]}
+else
+    REPO=${TARGET}
+    PWD=$(pwd)
+    if [[ ${PWD} =~ ^${GIT_ROOT}/([a-zA-Z0-9._-]+)$ ]]; then
+        HOST=${BASH_REMATCH[1]}
+        USER=${MY_GIT_NAME}
+    elif [[ ${PWD} =~ ^${GIT_ROOT}/([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$ ]]; then
+        HOST=${BASH_REMATCH[1]}
+        USER=${BASH_REMATCH[2]}
+    else
+        HOST=github.com
+        USER=${MY_GIT_NAME}
+    fi
+fi
+
+mkdir -p ${GIT_ROOT}/${HOST}/${USER} && cd $_
+if "${USE_TARGET}"; then
+    git clone ${TARGET}
+else 
+    git clone git@${HOST}:${USER}/${REPO}.git
+fi
+echo ========================================
+echo ${GIT_ROOT}/${HOST}/${USER}/${REPO}
