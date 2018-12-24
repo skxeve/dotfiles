@@ -1,0 +1,7 @@
+. $(dirname ${BASH_SOURCE:-$0})/asciify-pick
+
+_today=$(date +"%m%d")
+if [ "${_today}" = "1224" -o "${_today}" = "1225" ]; then
+    _font=$(asciify-pick | head -n 1)
+    asciify -f ${_font} "Merry Christmas"
+fi
