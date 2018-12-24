@@ -1,4 +1,4 @@
-if type asciify; then
+if type asciify >/dev/null 2>&1; then
     . $(dirname ${BASH_SOURCE:-$0})/asciify-pick
     
     _today=$(date +"%m%d")
