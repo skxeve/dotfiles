@@ -1,7 +1,23 @@
 . $(dirname ${BASH_SOURCE:-$0})/asciify-pick
 
 _today=$(date +"%m%d")
+_font=$(asciify-pick | head -n 1)
 if [ "${_today}" = "1224" -o "${_today}" = "1225" ]; then
-    _font=$(asciify-pick | head -n 1)
     asciify -f ${_font} "Merry Christmas"
+elif [ ${_today} =~ ^010[0-9]$ ]; then
+    asciify -f ${_font} "Happy New Year"
+elif [ "${_today}" = "0211" ]; then
+    asciify -f ${_font} "Japan Beginning"
+elif [ "${_today}" = "0429" ]; then
+    asciify -f ${_font} "Showa Day"
+elif [ "${_today}" = "0503" ]; then
+    asciify -f ${_font} "Constitution Day"
+elif [ "${_today}" = "0504" ]; then
+    asciify -f ${_font} "Greenery Day"
+elif [ "${_today}" = "0505" ]; then
+    asciify -f ${_font} "Children's Day"
+elif [ "${_today}" = "1103" ]; then
+    asciify -f ${_font} "Culture Day"
+elif [ "${_today}" = "1123" ]; then
+    asciify -f ${_font} "Thanksgiving Day"
 fi
