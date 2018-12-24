@@ -1,0 +1,39 @@
+function asciify-pick()
+{
+    if ! type asciify >/dev/null 2>&1; then
+        echo "Not found asciify"
+        echo "npm install asciify -g"
+        return
+    fi
+    local num=1
+    if expr $1 + 1 >/dev/null 2>&1; then
+        num=$1
+    fi
+    local fonts=$(asciify -l | awk '{print $2}' | sort -R)
+    local ignores=(nancyj-fancy tinker-toy univers wavy weird tombstone trek tsalagi twopoint ticksslant
+        stop avatar calgphy2 straight slscript cursive jazmine pyramid maxfour rozzo
+        digital small dotmatrix goofy eftifont roman script eftichess acrobatic nancyj
+        eftiwater alphabet eftirobot bigchief term sblood cricket 3x5 rot13 runyc
+        katakana smshadow short linux smscript lcd fourtops eftitalic stampatello mini
+        relief binary smkeyboard pawp threepoint nipples invita catwalk ntgreek coinstak
+        computer eftiwall serifcap jerusalem cosmike madrid madrid rounded thick bulbhead
+        graffiti tengwar runic contessa eftipiti bubble pepper relief2 italic cosmic
+        slide gothic smtengwar mnemonic mike cybersmall poison ticks diamond 3-d
+        lockergnome peaks block moscow)
+    local count=1
+    for f in ${fonts}
+    do
+        for i in ${ignores[*]}
+        do
+            if [ "${i}" = "${f}" ]; then
+                continue 2
+            fi
+        done
+        echo :${f}:
+        asciify -f ${f} "Hello"
+
+        if [ $((++count)) -gt ${num} ]; then
+            break
+        fi
+    done
+}
