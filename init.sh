@@ -13,7 +13,7 @@ else
     echo "created .bash_profile: $_addline"
 fi
 
-_addline=". $_shelldir/shell/load"
+_addline="export PATH=\$PATH:$_shelldir/bin"
 if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
     echo $_addline >> ~/.bash_profile
     echo "added: $_addline"
@@ -21,7 +21,7 @@ else
     echo "skip add: $_addline"
 fi
 
-_addline="export PATH=\$PATH:$_shelldir/bin"
+_addline=". $_shelldir/shell/load"
 if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
     echo $_addline >> ~/.bash_profile
     echo "added: $_addline"
