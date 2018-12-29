@@ -5,7 +5,7 @@ if type asciify >/dev/null 2>&1; then
     _font=$(asciify-pick | head -n 1)
     if [ "${_today}" = "1224" -o "${_today}" = "1225" ]; then
         asciify -f ${_font} "Merry Christmas"
-    elif [ ${_today} =~ ^010[0-9]$ ]; then
+    elif [[ ${_today} =~ ^010[0-9]$ ]]; then
         asciify -f ${_font} "Happy New Year"
     elif [ "${_today}" = "0211" ]; then
         asciify -f ${_font} "Japan Beginning"
