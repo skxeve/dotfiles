@@ -1,0 +1,6 @@
+function topen()
+{
+    touch ${1}
+    open ${1}
+}
+
