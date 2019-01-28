@@ -1,7 +1,8 @@
 #!/bin/bash
 
+cd dots
 echo ---------- dir ----------
-for dir in `(cd dots; find . -type d)`
+for dir in `(find . -type d)`
 do
     if [ "$dir" == "." ]; then
         continue
@@ -11,10 +12,10 @@ do
 done
 
 echo ---------- file ----------
-for file in `find dots -type f`
+for file in `find . -type f`
 do
     echo ========== $file ==========
-    copy_to=~/$(basename $file)
+    copy_to=~/$file
     if [ -f $copy_to ]; then
         diff $copy_to $file
         if [[ $? == 0 ]]; then
