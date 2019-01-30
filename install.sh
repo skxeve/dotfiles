@@ -4,3 +4,4 @@ cd ~/git/github.com/skxeve
 git clone https://github.com/skxeve/dotfiles.git
 cd dotfiles
 bash ./init.sh
+bash ./deploy_dots.sh
