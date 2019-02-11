@@ -1,0 +1,29 @@
+_done_file=/tmp/skxeve_dotfiles_self_update_done
+if [ ! -f $_done_file ]; then
+    _gitdir=$(cd $(dirname ${BASH_SOURCE:-$0})/../../; pwd)
+    cd $_gitdir
+    _gitbranch=$(git branch | awk '{print $2}')
+    if [ "${_gitbranch}" == "master" ]; then
+        . $(dirname ${BASH_SOURCE:-$0})/../function/line
+        line
+        echo Check dotfiles self-update
+
+        git fetch
+        if [[ `git diff master origin/master` ]]; then
+            echo -n "dotfiles have diff, update?(y/n): "
+            read ans
+            case "${ans}" in
+                y | Y | yes | Yes | YES)
+                    git graph -n 5
+                    line
+                    git merge --ff-only origin/master
+                    line
+                    git graph -n 5
+                    ;;
+                *)
+            esac
+        fi
+    fi
+    cd
+    touch $_done_file
+fi
