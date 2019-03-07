@@ -1,0 +1,1 @@
+alias trees='tree -a -N -I "\.DS_Store|\.git|__pycache__"'
