@@ -1,0 +1,18 @@
+function pip-update-all()
+{
+    if [ $(pip list -o|wc -l) -eq 0 ]; then
+        echo "No updates."
+        return
+    fi
+    pip list -o
+    . $(dirname ${BASH_SOURCE:-$0})/line
+    line
+    echo -n "Exec update?(y/n): "
+    read ans
+    case "${ans}" in
+        y | Y | yes | Yes | YES)
+            pip list -o| tail +3|awk '{print $1}' | xargs pip install -U
+            ;;
+        *)
+    esac
+}
