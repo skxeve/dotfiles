@@ -1,0 +1,27 @@
+function gengo()
+{
+    echo -n "西暦: "
+    read _YEAR
+    echo -n "月: "
+    read _MONTH
+    echo -n "日: "
+    read _DAY
+    
+    _YEAR=`echo ${_YEAR} | sed -e "s/[\r\n]\+//g"`
+    _MONTH=`echo ${_MONTH} | sed -e "s/[\r\n]\+//g"`
+    _DAY=`echo ${_DAY} | sed -e "s/[\r\n]\+//g"`
+    _YEAR=${_YEAR:-$(date +"%Y")}
+    _MONTH=${_MONTH:-$(date +"%m")}
+    _DAY=${_DAY:-$(date +"%d")}
+    
+    echo "${_YEAR}/${_MONTH}/${_DAY}"
+    if [ ${_YEAR} -lt 1926 ]; then
+        echo "西暦${_YEAR}年"
+    elif [ ${_YEAR} -lt 1989 -o ${_YEAR} -eq 1989 -a ${_MONTH} -le 1 -a ${_DAY} -le 7 ]; then
+        echo "昭和$(( $_YEAR - 1925 ))年"
+    elif [ ${_YEAR} -lt 2019 -o ${_YEAR} -eq 2019 -a ${_MONTH} -le 4 ]; then
+        echo "平成$(( $_YEAR - 1988 ))年"
+    else
+        echo "令和$(( $_YEAR - 2018 ))年"
+    fi
+}
