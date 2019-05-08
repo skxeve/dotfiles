@@ -1,0 +1,1 @@
+alias pytest-coverage="pytest -v --cov=. --cov-report=html -W ignore ; open ./htmlcov/index.html"
