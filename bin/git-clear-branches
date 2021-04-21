@@ -1,0 +1,2 @@
+#!/bin/bash
+git branch | awk '{print $1}' | egrep -v '(\*|develop|master)' | xargs -L1 -I{} git branch -d {}
