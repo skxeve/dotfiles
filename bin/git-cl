@@ -6,6 +6,9 @@ MY_GIT_NAME=skxeve
 TARGET=$1
 if [ "${TARGET}" = "" ]; then
     echo "Please specify repository"
+    echo "git-cl clone_target_repository"
+    echo "repository: git@hoge:fuga | https://hoge.com/hoge/fuga.git"
+    echo "Clone git repository on normalized dir."
     exit 1
 fi
 

@@ -1,0 +1,43 @@
+#!/bin/bash
+# 進捗が見えるfind&grepがしたかった（キルすべきか判断に困ることが多くて）
+
+GREP_KEY=$1
+FIND_NAME=${2:-*}
+FIND_ROOT=${3:-.}
+
+
+if [ "$GREP_KEY" = "" ]; then
+    echo "find-grep-files GREP_KEY [FIND_NAME] [FIND_ROOT]"
+    exit 1
+fi
+
+FILE_COUNT=$(find ${FIND_ROOT} -name "node_modules" -prune -o -name "venv" -prune -o -name ".git" -prune -o -name "__pycache__" -prune -o -name "vendor" -prune -o -type f -name "${FIND_NAME}" | wc -l | xargs)
+
+echo "" > /tmp/find-grep-files-$$.result
+
+count=0
+hit_count=0
+for file in `find ${FIND_ROOT} -name "node_modules" -prune -o -name "venv" -prune -o -name ".git" -prune -o -name "__pycache__" -prune -o -name "vendor" -prune -o -type f -name "*${FIND_NAME}"`
+do
+    count=$((++count))
+    if [ -d ${file} ]; then
+        continue
+    fi
+    echo "(${count}/${FILE_COUNT} hit:${hit_count}) ${file}"
+    if [[ `grep -I "${GREP_KEY}" ${file}` ]]; then
+        hit_count=$((++hit_count))
+        if [[ $(grep -InH "${GREP_KEY}" ${file} | awk '{l=length($0);if(m<l) m=l}END{print m}') -gt 500 ]]; then
+            echo "(${count}/${FILE_COUNT}) ${file} : skip output grep result - contain too long line." >> /tmp/find-grep-files-$$.result
+        else
+            echo "(${count}/${FILE_COUNT}) ${file}" >> /tmp/find-grep-files-$$.result
+            grep -InH "${GREP_KEY}" ${file} >> /tmp/find-grep-files-$$.result
+        fi
+        echo "" >> /tmp/find-grep-files-$$.result
+    fi
+done
+
+
+echo "=============================="
+cat /tmp/find-grep-files-$$.result
+echo "=============================="
+echo cat /tmp/find-grep-files-$$.result
