@@ -8,10 +8,10 @@
     graph = log --graph --date-order --all --pretty=format:'%Cgreen%h %C(Cyan)%ad %C(Magenta)%d%n    %C(Yellow)%cn %Creset%s' --date=iso -n 12
     dm = diff master
     df = diff master --name-only
-    ds = diff master --stat
+    last-now = commit --amend --reset-author
     throw = "!f() { if [ \"$1\" != \"\" ]; then _ownBranch=$(git branch --contains|awk '{print $2}'); git fetch; git ff $1; git merge $_ownBranch -m \"Merge branch $_ownBranch into $1\"; git checkout $_ownBranch; git push origin $1; else echo 'not set target branch name.'; fi; }; f"
     ff = "!f() { if [ \"$1\" != \"\" ]; then echo git checkout $1; git checkout $1; if [ $? -eq 0 ]; then echo git merge origin/$1 -ff; git merge origin/$1 --ff; fi; else echo 'not set branch name.'; fi; }; f"
-    up = "!f() { git status; git add .; git commit -m up; git push; }; f"
+    #up = "!f() { git status; git add .; git commit -m up; git push; }; f"
 [merge]
     ff = false
 [core]

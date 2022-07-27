@@ -17,13 +17,14 @@ set expandtab
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
+set hlsearch
 
 syntax enable
 if exists("syntax")
     syntax on
 endif
 set background=dark
-colorscheme darkblue
+colorscheme torte
 
 " enable ~/.vim/filetype.vim ~/.vim/indent/
 filetype plugin indent on
@@ -34,7 +35,8 @@ set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 
 " vim-plug
 " curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-" execute :PlugInstall
+" execute :PlugInstall on vim
+" Happy!
 call plug#begin()
 
 " git from vim plugin
@@ -51,6 +53,12 @@ Plug 'pangloss/vim-javascript'
 
 " async lint execute
 Plug 'w0rp/ale'
+
+" circleci config
+Plug 'yasuhiroki/circleci.vim'
+
+" typescript syntax
+Plug 'leafgarland/typescript-vim'
 
 call plug#end()
 

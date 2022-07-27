@@ -11,13 +11,13 @@ if [ "$GREP_KEY" = "" ]; then
     exit 1
 fi
 
-FILE_COUNT=$(find ${FIND_ROOT} -name "node_modules" -prune -o -name "venv" -prune -o -name ".git" -prune -o -name "__pycache__" -prune -o -name "vendor" -prune -o -type f -name "${FIND_NAME}" | wc -l | xargs)
+FILE_COUNT=$(find ${FIND_ROOT} -name "node_modules" -prune -o -name "venv" -prune -o -name ".git" -prune -o -name ".nox" -prune -o -name ".poetry" -prune -o -name ".mypy_cache" -prune -o -name "tests" -prune -o -name "__pycache__" -prune -o -name "vendor" -prune -o -type f -name "${FIND_NAME}" | wc -l | xargs)
 
 echo "" > /tmp/find-grep-files-$$.result
 
 count=0
 hit_count=0
-for file in `find ${FIND_ROOT} -name "node_modules" -prune -o -name "venv" -prune -o -name ".git" -prune -o -name "__pycache__" -prune -o -name "vendor" -prune -o -type f -name "*${FIND_NAME}"`
+for file in `find ${FIND_ROOT} -name "node_modules" -prune -o -name "venv" -prune -o -name ".git" -prune -o -name ".nox" -prune -o -name ".poetry" -prune -o -name ".mypy_cache" -prune -o -name "tests" -prune -o -name "__pycache__" -prune -o -name "vendor" -prune -o -type f -name "*${FIND_NAME}"`
 do
     count=$((++count))
     if [ -d ${file} ]; then
