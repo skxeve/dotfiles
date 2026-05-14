@@ -1,26 +1,35 @@
 _done_file=/tmp/skxeve_dotfiles_self_update_done
 if [ ! -f $_done_file ]; then
-    _gitdir=$(cd $(dirname ${BASH_SOURCE:-$0})/../../; pwd)
-    cd $_gitdir
-    _gitbranch=$(git branch | awk '{print $2}')
-    if [ "${_gitbranch}" == "master" ]; then
-        . $(dirname ${BASH_SOURCE:-$0})/../function/line
+    if [ -n "$BASH_SOURCE" ]; then
+        _current_script="$BASH_SOURCE"
+    elif [ -n "$ZSH_VERSION" ]; then
+        _current_script="${(%):-%x}"
+    else
+        _current_script="$0"
+    fi
+    _script_dir=$(cd $(dirname "$_current_script"); pwd)
+    cd $_script_dir/../../
+
+    _gitbranch=$(git rev-parse --abbrev-ref HEAD)
+    if [ "${_gitbranch}" = "master" ]; then
+        source $_script_dir/../function/line
         line
         echo Check dotfiles self-update
 
         git fetch
-        if [[ `git diff master origin/master` ]]; then
+        if [ -n "$(git diff master origin/master)" ]; then
             echo -n "dotfiles have diff, update?(y/n): "
             read ans
             case "${ans}" in
                 y | Y | yes | Yes | YES)
-                    git graph -n 5
+                    git graph -n 5 2>/dev/null || git log -n 5
                     line
                     git merge --ff-only origin/master
                     line
-                    git graph -n 5
+                    git graph -n 5 2>/dev/null || git log -n 5
                     ;;
                 *)
+                    ;;
             esac
         fi
     fi

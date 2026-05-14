@@ -2,9 +2,9 @@
 
 _shelldir=$(cd "$(dirname "$0")"; pwd)
 
-if [ -n "$ZSH_VERSION" ]; then
+if [[ "$SHELL" == *"/zsh"* ]]; then
     _target="$HOME/.zshrc"
-elif [ -n "$BASH_VERSION" ]; then
+elif [[ "$SHELL" == *"/bash"* ]]; then
     _target="$HOME/.bash_profile"
 else
     _target="$HOME/.profile"
