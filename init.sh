@@ -1,31 +1,35 @@
-_shelldir=$(cd $(dirname $0); pwd)
+#!/bin/bash
 
-_addline="# skxeve github dotfiles"
-if [ -f ~/.bash_profile ]; then
-    if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
-        echo $_addline >> ~/.bash_profile
-        echo "added: $_addline"
+_shelldir=$(cd "$(dirname "$0")"; pwd)
+
+if [ -n "$ZSH_VERSION" ]; then
+    _target="$HOME/.zshrc"
+elif [ -n "$BASH_VERSION" ]; then
+    _target="$HOME/.bash_profile"
+else
+    _target="$HOME/.profile"
+fi
+
+echo "Target file: $_target"
+
+[ ! -f "$_target" ] && touch "$_target"
+
+add_line_if_not_exists() {
+    local _line="$1"
+    local _file="$2"
+
+    if ! grep -Fq "$_line" "$_file"; then
+        echo "$_line" >> "$_file"
+        echo "added: $_line"
     else
-        echo "skip add: $_addline"
+        echo "skip add (already exists): $_line"
     fi
-else
-    echo $_addline > ~/.bash_profile
-    echo "created .bash_profile: $_addline"
-fi
+}
 
-_addline="export PATH=\$PATH:$_shelldir/bin"
-if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
-    echo $_addline >> ~/.bash_profile
-    echo "added: $_addline"
-else
-    echo "skip add: $_addline"
-fi
+echo "--- Initializing dotfiles ---"
 
-_addline=". $_shelldir/shell/load"
-if [ "$(grep -c "$_addline" ~/.bash_profile)" == "0" ]; then
-    echo $_addline >> ~/.bash_profile
-    echo "added: $_addline"
-else
-    echo "skip add: $_addline"
-fi
+add_line_if_not_exists "# skxeve github dotfiles" "$_target"
+add_line_if_not_exists "export PATH=\$PATH:$_shelldir/bin" "$_target"
+add_line_if_not_exists ". $_shelldir/shell/load" "$_target"
 
+echo "--- Done! Please restart your shell or run: source $_target ---"

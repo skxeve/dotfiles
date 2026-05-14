@@ -22,7 +22,10 @@ do
             echo no diff.
             continue
         fi
+        echo cp -i $file $copy_to
+        cp -i $file $copy_to
+    else
+        echo cp -n $file $copy_to
+        cp -n $file $copy_to
     fi
-    echo cp -i $file $copy_to
-    cp -i $file $copy_to
 done

@@ -45,9 +45,6 @@ Plug 'tpope/vim-fugitive'
 " easy edit surround
 Plug 'tpope/vim-surround'
 
-" golang plugin
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-
 " javascript plugin - support indent, highlight
 Plug 'pangloss/vim-javascript'
 
@@ -61,8 +58,3 @@ Plug 'yasuhiroki/circleci.vim'
 Plug 'leafgarland/typescript-vim'
 
 call plug#end()
-
-
-" vim-go
-let g:go_fmt_command = "goimports"
-

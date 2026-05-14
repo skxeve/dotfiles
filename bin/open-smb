@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -eu
+
+usage() {
+  echo "Usage: open-smb <UNC_PATH or SMB_URL>"
+  echo "Example: open-smb '\\\\server\\share\\folder'"
+  echo "         open-smb 'smb://server/share/folder'"
+  exit 1
+}
+
+if [[ $# -eq 0 || -z "$1" ]]; then
+  usage
+fi
+
+input_string="$1"
+target_url=""
+
+if [[ "$input_string" =~ ^smb:// ]]; then
+  target_url="$input_string"
+else
+  if [[ ! "$input_string" =~ ^\\ ]]; then
+    echo "Error: Path must start with \\ or smb://"
+    exit 1
+  fi
+
+  normalized_path="\\${input_string#\\}"
+  normalized_path="\\${normalized_path#\\}"
+
+  backslash_only="${normalized_path//[^\\]/}"
+  if [[ ${#backslash_only} -lt 4 ]]; then
+    echo "Error: Path is too short (e.g., \\\\server\\share\\path)"
+    exit 1
+  fi
+
+  target_url="smb:${normalized_path//\\//}"
+fi
+
+target_url="${target_url// /%20}"
+
+echo "Connecting to: $target_url"
+open "$target_url"

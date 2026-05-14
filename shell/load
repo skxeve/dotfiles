@@ -7,7 +7,7 @@ do
         for _shellpath in `find $_dirpath -type f`
         do
             if [ -f ${_shellpath} ]; then
-                . $_shellpath
+                source $_shellpath
             fi
         done
     fi
