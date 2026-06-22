@@ -1,0 +1,235 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+info()    { print -P "%F{cyan}[INFO]%f  $*" }
+success() { print -P "%F{green}[OK]%f    $*" }
+warn()    { print -P "%F{yellow}[WARN]%f  $*" }
+error()   { print -P "%F{red}[ERROR]%f $*" }
+section() { echo; print -P "%B%F{white}━━━ $* ━━━%f%b" }
+
+confirm() {
+  local msg="$1"
+  local answer
+  echo -n "${YELLOW}[?]${RESET} ${msg} [y/N]: "
+  read -r answer
+  [[ "${answer:l}" == "y" ]]
+}
+
+major_version() {
+  echo "$1" | cut -d. -f1
+}
+
+section "1. macOS Software Update"
+
+info "Checking for available updates..."
+available_updates=$(softwareupdate --list 2>&1)
+
+if echo "$available_updates" | grep -q "No new software available"; then
+  success "No macOS updates available"
+else
+  current_macos=$(sw_vers -productVersion)
+  current_major=$(major_version "$current_macos")
+  info "Current macOS version: ${current_macos}"
+
+  install_labels=()
+  skip_major=false
+
+  while IFS= read -r line; do
+    if [[ "$line" =~ '^\* Label: (.+)$' ]]; then
+      label="${match[1]}"
+    elif [[ "$line" =~ 'Version: ([0-9]+\.[0-9]+(\.[0-9]+)?)' ]]; then
+      ver="${match[1]}"
+      update_major=$(major_version "$ver")
+      if (( update_major > current_major )); then
+        warn "Skipping major version upgrade: ${label} (${ver})"
+        skip_major=true
+      else
+        install_labels+=("$label")
+      fi
+    fi
+  done < <(echo "$available_updates")
+
+  if (( ${#install_labels[@]} == 0 )); then
+    if $skip_major; then
+      info "Only major version upgrades found. Skipping."
+    else
+      success "No updates to install"
+    fi
+  else
+    warn "macOS updates are available (minor/patch):"
+    for label in "${install_labels[@]}"; do
+      warn "  - ${label}"
+    done
+    echo
+    warn "Please update macOS manually, then run this script again."
+    warn "  -> System Settings > General > Software Update"
+    warn "  -> or: sudo softwareupdate --install ${install_labels[*]}"
+    exit 0
+  fi
+fi
+
+section "2. brew update"
+
+info "Updating Homebrew formulae..."
+if ! brew update; then
+  error "brew update failed. Aborting."
+  exit 1
+fi
+success "brew update complete"
+
+section "3. brew outdated (major version check)"
+
+outdated_json=$(brew outdated --json=v2)
+pinned_by_script=()
+
+formulae_count=$(echo "$outdated_json" | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+print(len(data.get('formulae', [])))
+")
+
+if (( formulae_count == 0 )); then
+  success "No outdated formulae"
+else
+  while IFS=$'\t' read -r name current_version latest_version; do
+    current_major=$(major_version "$current_version")
+    latest_major=$(major_version "$latest_version")
+    if (( latest_major > current_major )); then
+      warn "Major version upgrade detected: ${name} (${current_version} -> ${latest_version})"
+      info "  -> Pinning: brew pin ${name}"
+      brew pin "$name"
+      pinned_by_script+=("$name")
+    fi
+  done < <(echo "$outdated_json" | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for f in data.get('formulae', []):
+    name = f['name']
+    installed = f['installed_versions'][0] if f['installed_versions'] else '0.0.0'
+    current = f['current_version']
+    print(f'{name}\t{installed}\t{current}')
+")
+fi
+
+casks_count=$(echo "$outdated_json" | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+print(len(data.get('casks', [])))
+")
+
+if (( casks_count > 0 )); then
+  while IFS=$'\t' read -r name current_version latest_version; do
+    current_major=$(major_version "$current_version")
+    latest_major=$(major_version "$latest_version")
+    if (( latest_major > current_major )); then
+      warn "Major version upgrade detected (cask): ${name} (${current_version} -> ${latest_version})"
+      info "  -> Pinning: brew pin ${name}"
+      brew pin "$name" 2>/dev/null || warn "Cask '${name}' does not support pin. Manual review recommended."
+      pinned_by_script+=("$name")
+    fi
+  done < <(echo "$outdated_json" | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for c in data.get('casks', []):
+    name = c['name']
+    installed = c['installed_versions'] or '0.0.0'
+    current = c['current_version']
+    print(f'{name}\t{installed}\t{current}')
+")
+fi
+
+if (( ${#pinned_by_script[@]} > 0 )); then
+  warn "Pinned the following packages due to major version upgrades:"
+  for pkg in "${pinned_by_script[@]}"; do
+    warn "  - ${pkg}"
+  done
+else
+  success "No major version upgrades detected"
+fi
+
+section "4. brew upgrade"
+
+info "Upgrading packages..."
+if ! brew upgrade; then
+  error "brew upgrade failed. Aborting."
+  exit 1
+fi
+success "brew upgrade complete"
+
+section "5. Pinned packages review"
+
+all_pinned=$(brew list --pinned)
+
+if [[ -z "$all_pinned" ]]; then
+  success "No pinned packages"
+else
+  echo
+  info "Currently pinned packages:"
+  while IFS= read -r pkg; do
+    echo "  ${YELLOW}[pinned] ${pkg}${RESET}"
+  done < <(echo "$all_pinned")
+
+  if (( ${#pinned_by_script[@]} > 0 )); then
+    echo
+    warn "Packages pinned by this script (major version upgrades):"
+    for pkg in "${pinned_by_script[@]}"; do
+      warn "  - ${pkg}"
+    done
+    echo
+    if confirm "Unpin and upgrade these packages?"; then
+      for pkg in "${pinned_by_script[@]}"; do
+        info "brew unpin ${pkg}"
+        brew unpin "$pkg"
+        info "brew upgrade ${pkg}"
+        brew upgrade "$pkg"
+        success "${pkg} upgraded"
+      done
+    else
+      info "Keeping pins. To unpin later: brew unpin <package>"
+    fi
+  fi
+fi
+
+section "6. brew doctor"
+
+info "Running Homebrew diagnostics..."
+doctor_output=$(brew doctor 2>&1) && doctor_status=$? || doctor_status=$?
+
+if (( doctor_status == 0 )); then
+  success "brew doctor: all good"
+else
+  warn "brew doctor detected issues (manual intervention required):"
+  echo
+  echo "$doctor_output"
+  echo
+  warn "Please review the output above and fix any issues manually."
+fi
+
+section "7. gcloud components update"
+
+if ! command -v gcloud &>/dev/null; then
+  warn "gcloud not found. Please verify that the Google Cloud SDK is installed."
+else
+  info "Updating gcloud components..."
+  gcloud components update --quiet
+  success "gcloud components update complete"
+fi
+
+section "All steps completed"
+
+if (( ${#pinned_by_script[@]} > 0 )); then
+  warn "Note: the following packages remain pinned due to major version upgrades:"
+  for pkg in "${pinned_by_script[@]}"; do
+    warn "  - ${pkg}"
+  done
+fi
+
+success "Done."
