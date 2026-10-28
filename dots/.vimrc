@@ -5,6 +5,7 @@ set vb t_vb=
 set backspace=indent,eol,start
 
 set ignorecase
+set smartcase
 set title
 set number
 set showcmd
@@ -26,7 +27,7 @@ endif
 set background=dark
 colorscheme torte
 
-" enable ~/.vim/filetype.vim ~/.vim/indent/
+" Filetype-specific settings live in ~/.vim/after/ftplugin/
 filetype plugin indent on
 
 " show invisible chars
@@ -35,26 +36,27 @@ set listchars=tab:»-,trail:-,eol:↲,extends:»,precedes:«,nbsp:%
 
 " vim-plug
 " curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-" execute :PlugInstall on vim
-" Happy!
-call plug#begin()
+" Run :PlugInstall when optional plugins are wanted.
+if !empty(globpath(&runtimepath, 'autoload/plug.vim'))
+    call plug#begin()
 
 " git from vim plugin
-Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-fugitive'
 
 " easy edit surround
-Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-surround'
 
 " javascript plugin - support indent, highlight
-Plug 'pangloss/vim-javascript'
+    Plug 'pangloss/vim-javascript'
 
 " async lint execute
-Plug 'w0rp/ale'
+    Plug 'w0rp/ale'
 
 " circleci config
-Plug 'yasuhiroki/circleci.vim'
+    Plug 'yasuhiroki/circleci.vim'
 
 " typescript syntax
-Plug 'leafgarland/typescript-vim'
+    Plug 'leafgarland/typescript-vim'
 
-call plug#end()
+    call plug#end()
+endif
